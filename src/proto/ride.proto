@@ -1,0 +1,30 @@
+syntax = "proto3";
+package ride;
+
+service Ride {
+  rpc PublishRide(PublishRideRequest) returns (PublishRideResponse);
+}
+
+message PublishRideRequest {
+  float start_lat = 1;
+  float start_lng = 2;
+  string start_address = 3;
+  float end_lat = 4;
+  float end_lng = 5;
+  string end_address = 6;
+  string routeName = 7;
+  string distance = 8;
+  string duration = 9;
+  int32 numSeats = 10;
+  string rideDate = 11;
+  string rideTime = 12;
+  float pricePerSeat = 13;
+  string car = 14;
+  string additionalInfo = 15;
+  string status = 16;
+  string riderId = 17;
+}
+
+message PublishRideResponse {
+  string message = 1;
+}
