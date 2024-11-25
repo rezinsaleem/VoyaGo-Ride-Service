@@ -16,4 +16,11 @@ export interface PublishRideInterface {
   additionalInfo?: string;
   status: string;
   riderId: string;
+  passengers: Passenger[];
+}
+
+interface Passenger {
+  id: number;
+  name: string;
+  phoneNumber: number,
 }

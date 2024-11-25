@@ -1,5 +1,12 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+// Define the Passenger interface
+interface Passenger {
+  id: string;
+  name: string;
+  phoneNumber: number;
+}
+
 // Define the Ride interface
 interface RideInterface extends Document {
   start_lat: number;
@@ -18,7 +25,8 @@ interface RideInterface extends Document {
   car: string;
   additionalInfo?: string;
   status: string;
-  riderId:  String;
+  riderId: string;
+  passengers: Passenger[];  // Define passengers as an array of Passenger objects
 }
 
 // Define the Ride schema
@@ -88,8 +96,17 @@ const RideSchema: Schema = new Schema(
       default: 'Available',
     },
     riderId: {
-      type: String, 
+      type: String,
       required: true,
+    },
+    passengers: {
+      type: [{
+        id: { type: String, required: true },
+        name: { type: String, required: true },
+        phoneNumber: { type: Number, required: true },
+      }],
+      required: true,
+      default: [],
     },
   },
   {

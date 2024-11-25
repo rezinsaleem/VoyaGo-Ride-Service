@@ -25,13 +25,45 @@ export default class PublishRideUseCase {
     riderId: string
   ) => {
     try {
-      
-      const existingRide = await rideRepository.findActiveRide(riderId, rideDate, rideTime);
-      if (existingRide) {
-        return { message: 'RideAlreadyExists' };
+      // Find existing rides for the same date
+      const existingRides = await rideRepository.findActiveRide(riderId, rideDate);
+      if (existingRides.length > 0) {
+        // Parse proposed start time
+        const proposedStartTime = new Date(rideDate);
+        const [proposedHours, proposedMinutes, proposedPeriod] = rideTime.split(/[: ]/);
+        proposedStartTime.setHours(
+          parseInt(proposedHours) + (proposedPeriod === "PM" && parseInt(proposedHours) !== 12 ? 12 : 0),
+          parseInt(proposedMinutes)
+        );
+  
+        for (const ride of existingRides) {
+          const { rideTime: existingRideTime, duration: existingDuration, rideDate: existingRideDate } = ride;
+  
+          const existingRideStartTime = new Date(existingRideDate);
+          const [startHours, startMinutes, startPeriod] = existingRideTime.split(/[: ]/);
+          existingRideStartTime.setHours(
+            parseInt(startHours) + (startPeriod === "PM" && parseInt(startHours) !== 12 ? 12 : 0),
+            parseInt(startMinutes)
+          );
+  
+          const durationParts = existingDuration.split(" ");
+          const durationInMinutes =
+            parseInt(durationParts[0]) * 60 + (durationParts[2] ? parseInt(durationParts[2]) : 0);
+          const existingRideEndTime = new Date(existingRideStartTime);
+          existingRideEndTime.setMinutes(existingRideEndTime.getMinutes() + durationInMinutes);
+  
+          const nextRideAllowedTime = new Date(existingRideEndTime);
+          nextRideAllowedTime.setHours(nextRideAllowedTime.getHours() + 2);
+  
+          if (proposedStartTime < nextRideAllowedTime) {
+            return {
+              message: `Ride Already Exists, Select the start time which doesn't matters the other ride!`
+            };
+          }
+        }
       }
-
-      // Prepare ride data for saving
+  
+      // Prepare new ride data for saving
       const newRideData: PublishRideInterface = {
         start_lat,
         start_lng,
@@ -49,15 +81,15 @@ export default class PublishRideUseCase {
         car,
         additionalInfo,
         status,
-        riderId
+        riderId,
+        passengers: []
       };
-      
+  
+      // Save the ride
       const response = await rideRepository.saveRide(newRideData);
-
+  
       if (response.message === 'RideCreated') {
-        return {
-          message: 'Success',
-        };
+        return { message: 'Success', rideId: response.rideId };
       } else {
         console.error("Error creating ride:", response);
         return { message: 'RideNotCreated' };
@@ -67,4 +99,33 @@ export default class PublishRideUseCase {
       return { message: (error as Error).message };
     }
   };
+  
+  getRide = async (id: string) => {
+    try {
+      const ride = await rideRepository.findById(id);
+      if (ride) {
+        const response = {
+           start_address : ride.start_address,
+           end_address : ride.end_address,
+           routeName : ride.routeName,
+           distance : ride.distance,
+           duration :  ride.duration,
+           numSeats : ride.numSeats,
+           rideDate : ride.rideDate,
+           rideTime : ride.rideTime,
+           pricePerSeat : ride.pricePerSeat,
+           car : ride.car,
+           additionalInfo : ride.additionalInfo,
+           status : ride.status,
+           passengers: ride.passengers,
+        };
+        return { ...response };
+      } else {
+        return { message: 'No Ride Found' };
+      }
+    } catch (error) {
+      return { message: (error as Error).message };
+    }
+  };
+
 }

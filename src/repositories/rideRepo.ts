@@ -6,13 +6,12 @@ import RideModel from "../entities/ride"; // Assuming RideModel is a Mongoose mo
 export default class RideRepository {
   
   // Method to find an active ride based on specific criteria
-  async findActiveRide(riderId: string, rideDate: string, rideTime: string) {
+  async findActiveRide(riderId: string, rideDate: string) {
     try {
-      return await RideModel.findOne({
+      return await RideModel.find({
         riderId,
         rideDate,
-        rideTime,
-        status: "active" // Adjust this as needed based on your ride status logic
+        status: "available" 
       });
     } catch (error) {
       console.error("Error finding active ride:", error);
@@ -41,6 +40,16 @@ export default class RideRepository {
       throw new Error("Error finding ride by ID");
     }
   }
+
+  findById = async (id: string) => {
+    try {
+      const ride = await RideModel.findById(id)
+      return ride;
+    } catch (error) {
+      console.error('Error finding ride: ', (error as Error).message);
+      throw new Error('Ride search failed');
+    }
+  };
 
   // Add other methods as needed (e.g., updateRide, deleteRide, etc.)
 }
