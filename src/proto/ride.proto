@@ -4,6 +4,7 @@ package ride;
 service Ride {
   rpc PublishRide(PublishRideRequest) returns (PublishRideResponse);
   rpc GetRide(GetRideRequest) returns (GetRideResponse);
+  rpc SearchRides(SearchRideRequest) returns (SearchRideResponse);
 }
 
 message PublishRideRequest {
@@ -55,4 +56,41 @@ message Passenger {
   int32 id = 1;
   string name = 2;
   int64 phoneNumber = 3;
+}
+
+message SearchRideRequest {
+  float start_lat = 1;
+  float start_lng = 2;
+  string start_address = 3;
+  float end_lat = 4;
+  float end_lng = 5;
+  string end_address = 6;
+  string date = 7;
+}
+
+message GetSearchResponse {
+  float start_lat = 1;
+  float start_lng = 2;
+  string start_address = 3;
+  float end_lat = 4;
+  float end_lng = 5;
+  string end_address = 6;
+  string routeName = 7;
+  string distance = 8;
+  string duration = 9;
+  int32 numSeats = 10;
+  string rideDate = 11;
+  string rideTime = 12;
+  float pricePerSeat = 13;
+  string car = 14;
+  string additionalInfo = 15;
+  string status = 16;
+  string riderId = 17;
+  repeated Passenger passengers = 18;
+  float startDistance = 19;
+  float endDistance = 20;
+}
+
+message SearchRideResponse {
+  repeated GetSearchResponse rides = 1;
 }

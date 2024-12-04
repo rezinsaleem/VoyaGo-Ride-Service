@@ -1,6 +1,7 @@
 
 import RideRepository from "../repositories/rideRepo";
-import { PublishRideInterface } from "../utilities/interface"; // Assuming this interface defines the structure / Assuming this is a utility to validate ride data
+import { PublishRideInterface } from "../utilities/interface"; 
+import getDistance from "../services/getDistance";
 
 const rideRepository = new RideRepository();
 
@@ -25,8 +26,10 @@ export default class PublishRideUseCase {
     riderId: string
   ) => {
     try {
+      const date = rideDate.split("T")[0];
+const dateToCheck = `${date}T00:00:00.000+00:00`;
       // Find existing rides for the same date
-      const existingRides = await rideRepository.findActiveRide(riderId, rideDate);
+      const existingRides = await rideRepository.findActiveRide(riderId, dateToCheck);
       if (existingRides.length > 0) {
         // Parse proposed start time
         const proposedStartTime = new Date(rideDate);
@@ -63,7 +66,7 @@ export default class PublishRideUseCase {
         }
       }
   
-      // Prepare new ride data for saving
+      const datePart = rideDate.split("T")[0];
       const newRideData: PublishRideInterface = {
         start_lat,
         start_lng,
@@ -75,7 +78,7 @@ export default class PublishRideUseCase {
         distance,
         duration,
         numSeats,
-        rideDate,
+        rideDate :datePart,
         rideTime,
         pricePerSeat,
         car,
@@ -124,6 +127,55 @@ export default class PublishRideUseCase {
         return { message: 'No Ride Found' };
       }
     } catch (error) {
+      return { message: (error as Error).message };
+    }
+  };
+
+  searchRides = async (
+    start_lat: number,
+    start_lng: number,
+    start_address: string,
+    end_lat: number,
+    end_lng: number,
+    end_address: string,
+    date: string
+  ) => {
+    try {
+      const rideDate = date.split("T")[0];
+      const dateToCheck = `${rideDate}T00:00:00.000+00:00`;
+      console.log(dateToCheck,'qweerr');
+      const existingRides = await rideRepository.findRideByDate(dateToCheck);
+    
+      console.log(existingRides,'ithhh');
+
+      const filteredRides = [];
+
+  for (const ride of existingRides) {
+    const rideStart = { lat: ride.start_lat, lng: ride.start_lng };
+    const rideEnd = { lat: ride.end_lat, lng: ride.end_lng };
+    const userStart = { lat: start_lat, lng: start_lng };
+    const userEnd = { lat: end_lat, lng: end_lng };
+
+    try {
+      const startDistance = await getDistance(userStart, rideStart);
+      const endDistance = await getDistance(userEnd, rideEnd);
+
+      if (startDistance <= 30 && endDistance <= 30) {
+        filteredRides.push({
+          ...ride,
+          startDistance,
+          endDistance
+        });
+      }
+    } catch (error) {
+      console.error('Error calculating distance:', error);
+    }
+  }
+console.log('filteredd..rides..',filteredRides);
+return { rides: filteredRides };
+     
+    } catch (error) {
+      console.error("Error in Searching Ride:", error);
       return { message: (error as Error).message };
     }
   };

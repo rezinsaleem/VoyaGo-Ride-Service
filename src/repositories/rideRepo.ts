@@ -4,8 +4,19 @@ import { PublishRideInterface } from "../utilities/interface";
 import RideModel from "../entities/ride"; // Assuming RideModel is a Mongoose model representing rides
 
 export default class RideRepository {
-  
-  // Method to find an active ride based on specific criteria
+
+  async findRideByDate(date: string) {
+    try {
+      return await RideModel.find({
+        rideDate: date, 
+        status: "available" 
+      }).lean();
+    } catch (error) {
+      console.error("Error finding active ride:", error);
+      throw new Error("Error finding active ride");
+    }
+  }
+
   async findActiveRide(riderId: string, rideDate: string) {
     try {
       return await RideModel.find({
