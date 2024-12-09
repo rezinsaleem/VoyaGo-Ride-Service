@@ -109,4 +109,34 @@ export default class RideController {
       callback(null, { error: (error as Error).message });
     }
   };
+
+  paymentSuccess = async (
+    call: {
+      request: {
+        id: string;
+        amount: number;
+        paymentType: string;
+        paymentId : string;
+        passengerName : string;
+        passengerId : string;
+        passengerPhone : number;
+        passengerImage : string;
+        passengerEmail : string;
+        riderId : string;
+        riderName : string;
+        riderEmail : string;
+        riderPhone : number;
+      };
+    },
+    callback: (error: any, response: any) => void
+  ) => {
+    try {
+      const {id, amount, paymentType ,paymentId, passengerName, passengerId ,passengerImage ,passengerPhone, passengerEmail,riderId,riderName,riderEmail, riderPhone} = call.request
+      const response = await rideUseCase.paymentSuccess(id,amount,paymentType,paymentId, passengerName, passengerId ,passengerPhone,passengerImage , passengerEmail, riderId, riderName, riderEmail, riderPhone);
+      callback(null, response);
+    } catch (error) {
+      console.error('Error while Booking:', error);
+      callback(null, { error: (error as Error).message });
+    }
+  };
 }

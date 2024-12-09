@@ -5,6 +5,28 @@ service Ride {
   rpc PublishRide(PublishRideRequest) returns (PublishRideResponse);
   rpc GetRide(GetRideRequest) returns (GetRideResponse);
   rpc SearchRides(SearchRideRequest) returns (SearchRideResponse);
+
+  rpc PaymentSuccess(PaymentSuccessRequest) returns (PaymentSuccessResponse);
+}
+
+message PaymentSuccessResponse {
+  string message = 1;
+}
+
+message PaymentSuccessRequest {
+  string id = 1;
+  double amount = 2;
+  string paymentType = 3;
+  string paymentId = 4;
+  string passengerName = 5;
+  string passengerId = 6;
+  int64 passengerPhone = 7;
+  string passengerImage = 8;
+  string passengerEmail = 9;
+  string riderId = 10;
+  string riderName = 11;
+  string riderEmail = 12;
+  int64 riderPhone = 13;
 }
 
 message PublishRideRequest {
@@ -89,6 +111,7 @@ message GetSearchResponse {
   repeated Passenger passengers = 18;
   float startDistance = 19;
   float endDistance = 20;
+  string _id = 21;
 }
 
 message SearchRideResponse {

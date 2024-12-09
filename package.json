@@ -12,6 +12,7 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^22.9.0",
+    "@types/nodemailer": "^6.4.17",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
@@ -21,6 +22,8 @@
     "@grpc/proto-loader": "^0.7.13",
     "axios": "^1.7.8",
     "dotenv": "^16.4.5",
-    "mongoose": "^8.8.0"
+    "mongoose": "^8.8.0",
+    "nodemailer": "^6.9.16",
+    "razorpay": "^2.9.5"
   }
 }
