@@ -36,6 +36,8 @@ server.addService(grpcObject.ride.Ride.service, {
   GetRide: rideController.getRide,
   SearchRides : rideController.searchRides,
   PaymentSuccess: rideController.paymentSuccess,
+  GetRides: rideController.getRides,
+  CancelRide : rideController.cancelRide,
 });
 
 const SERVER_ADDRESS = process.env.GRPC_SERVER_PORT || '50003';

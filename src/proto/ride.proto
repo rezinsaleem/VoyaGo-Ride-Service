@@ -7,7 +7,31 @@ service Ride {
   rpc SearchRides(SearchRideRequest) returns (SearchRideResponse);
 
   rpc PaymentSuccess(PaymentSuccessRequest) returns (PaymentSuccessResponse);
+  rpc GetRides(Empty) returns (GetRidesResponse);
+  rpc CancelRide(CancelRideRequest) returns (PaymentSuccessResponse);
 }
+
+message CancelRideRequest {
+  string id = 1;
+}
+
+message RideMessage {
+  string _id = 1;                 
+  string start_address = 2;                
+  string end_address = 3;               
+  int32 numSeats = 4;
+  string rideDate = 5;
+  string rideTime = 6;
+  float pricePerSeat = 7; 
+  string riderId = 8;          
+  repeated Passenger passengers = 9; 
+}
+
+message GetRidesResponse {
+  repeated RideMessage rides = 1;
+}
+
+message Empty {}
 
 message PaymentSuccessResponse {
   string message = 1;

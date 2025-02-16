@@ -139,4 +139,39 @@ export default class RideController {
       callback(null, { error: (error as Error).message });
     }
   };
+
+  getRides = async (
+    call: any,
+    callback: (error: any, response: any) => void
+  ) => {
+    try {
+      const rides = await rideUseCase.getRides();
+      console.log(rides,'laaaaaaaa');
+      callback(null, rides);
+    } catch (error) {
+      console.error('Error fetching Rides:', error);
+      callback(null, { error: (error as Error).message });
+    }
+  };
+
+  cancelRide  = async (
+    call: {
+      request: {
+        id: string;
+      };
+    },
+    callback: (error: any, response: any) => void
+  ) => {
+    try {
+      const { id } = call.request;
+      console.log( id ,'vannn')
+      const response = await rideUseCase.cancelRide(id);
+      console.log(response,'poyii');
+      callback(null, response);
+    } catch (error) {
+      console.error('Error fetching Rides:', error);
+      callback(null, { error: (error as Error).message });
+    }
+  };
+
 }

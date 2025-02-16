@@ -62,6 +62,30 @@ export default class RideRepository {
     }
   };
 
+  findByIdAndUpdate = async (
+    id: string
+  ): Promise<{ message: string }> => {
+    try {
+      const updatedRide = await rideModel.findByIdAndUpdate(
+        id,
+        { $set: { status: 'cancelled' } }, // Update the status to 'cancelled'
+        { new: true, runValidators: true } // Return the updated document and run validations
+      );
+  
+      if (!updatedRide) {
+        console.warn(`Ride with ID ${id} not found.`);
+        return { message: 'Ride not found.' };
+      }
+  
+      console.info(`Ride with ID ${id} updated successfully.`);
+      return { message: 'RideUpdated' };
+    } catch (error) {
+      console.error('Error updating ride:', (error as Error).message);
+      return { message: 'Error updating ride: ' + (error as Error).message };
+    }
+  };
+  
+  
 
   findByIdAndUpdateRide = async (
     id: string,
@@ -111,6 +135,16 @@ export default class RideRepository {
     }
   };
   
+
+  findAll = async () => {
+    try {
+      const rides = await rideModel.find()
+      return rides;
+    } catch (error) {
+      console.error('Error finding Rides: ', (error as Error).message);
+      throw new Error('Rides search failed');
+    }
+  }; 
 
   // Add other methods as needed (e.g., updateRide, deleteRide, etc.)
 }

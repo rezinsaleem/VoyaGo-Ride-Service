@@ -314,4 +314,35 @@ export default class PublishRideUseCase {
       return { message: (error as Error).message };
     }
   };
-}  
+
+  getRides = async () => {
+    try {
+      const rides = await rideRepository.findAll();
+      if (rides && rides.length > 0) {
+        return { rides };
+      } else {
+        return { message: 'No Rides Found' };
+      }
+    } catch (error) {
+      return { message: (error as Error).message };
+    }
+  };
+
+  cancelRide = async (id: string): Promise<{ message: string }> => {
+    try {
+      const response = await rideRepository.findByIdAndUpdate(id);
+  
+      if (response.message === 'RideUpdated') {
+        return { message: 'success' };
+      } else {
+        console.warn(`Cancel ride failed for ID ${id}: ${response.message}`);
+        return { message: 'Request Failed' };
+      }
+    } catch (error) {
+      console.error(`Error canceling ride with ID ${id}:`, (error as Error).message);
+      return { message: `Error: ${(error as Error).message}` };
+    }
+  };
+  
+
+} 

@@ -5,6 +5,7 @@ interface Passenger {
   id: string;
   name: string;
   phoneNumber: number;
+  image: string;
 }
 
 // Define the Ride interface
